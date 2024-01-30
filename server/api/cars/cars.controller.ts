@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { CarModel } from "../../database/models/car.model";
 import Car from "./car"
-import { checkCarByVIN, addCar} from "../../database/methods/car.methods";
+import { checkCarByVIN, addCar, setServicePrice } from "../../database/methods/car.methods";
 import { validateToken } from "../../middleware/token-validator";
 
 const carsController = Router()
@@ -29,6 +29,30 @@ carsController.get('/get_by_VIN/:VIN', async (req, res) => {
         return;
     }
     res.status (200).json ({ successMessage: "VIN: " + req.params.VIN, Car_information: car});
+})
+
+carsController.post ('/set_price', validateToken, async (req, res) => {
+    const vin = req.body.VIN as string;
+    const price = parseInt(req.body.price as string);
+
+    if (!vin) {
+        res.status(400).json({ errorMessage: "No VIN provided" });
+        return;
+    }
+
+    if (isNaN(price)) {
+        res.status(400).json({ errorMessage: "Invalid price provided" });
+        return;
+    }
+
+    try {
+        console.log("price: ", price);
+        console.log("vin: ", vin);
+        await setServicePrice(vin, price);
+        res.status(200).json({ successMessage: "Car service price updated successfully!" });
+    } catch (error) {
+        res.status(400).json({ errorMessage: "Error setting car price: " + error });
+    }
 })
 
 carsController.post('/add_car/', validateToken, async (req, res) => {

@@ -27,3 +27,19 @@ export async function addCar (car: Car): Promise<any>
 
     return await carModel.save ();
 }
+
+export async function setServicePrice (VIN: string, price: Number)
+{
+    const car = await CarModel.findOneAndUpdate ( {VIN: VIN},
+        {
+            $set:
+            {
+                serviceCost: price
+            }
+        }
+    );
+
+    if (!car) {
+        throw new Error ("No car with such VIN");
+    }
+}
