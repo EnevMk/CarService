@@ -2,6 +2,7 @@ import { Router } from "express";
 import { CarModel } from "../../database/models/car.model";
 import Car from "./car"
 import { checkCarByVIN, addCar} from "../../database/methods/car.methods";
+import { validateToken } from "../../middleware/token-validator";
 
 const carsController = Router()
 
@@ -30,7 +31,7 @@ carsController.get('/get_by_VIN/:VIN', async (req, res) => {
     res.status (200).json ({ successMessage: "VIN: " + req.params.VIN, Car_information: car});
 })
 
-carsController.post('/add_car/', /* validateAdmin, validateToken, */ async (req, res) => {
+carsController.post('/add_car/', validateToken, async (req, res) => {
 
     const VIN = req.body.VIN;
     const brand = req.body.brand
@@ -58,11 +59,10 @@ carsController.post('/add_car/', /* validateAdmin, validateToken, */ async (req,
         car = await addCar (new Car (VIN, brand, model, service));
     }
     catch (error) {
-        console.log ("wallahi")
         res.status (500).json ({ errorMessage: "Couldn't add car to database: " + error });
         return;
     }
-    res.status (201).json (car)
+    res.status (201).json ({ successMessage: "Car added successfully!"} )
 })
 
 export default carsController;
