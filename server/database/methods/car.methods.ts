@@ -16,6 +16,7 @@ export async function addCar (car: Car): Promise<any>
         brand: car.brand,
         model: car.model,
         service: car.service,
+        serviceStatus: "Waiting for service"
     })
 
     const validationError = carModel.validateSync ();
