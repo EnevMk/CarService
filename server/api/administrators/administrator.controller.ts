@@ -1,6 +1,7 @@
 import { Router } from "express";
 import Administrator from "./administrator"
 import { createAdmin, login } from "../../database/methods/administrator.methods"
+import { validateEmail } from "../../external/payment-api";
 
 const administratorsController = Router ();
 
@@ -10,6 +11,14 @@ const MONGODB_ERRORS = {
 
 administratorsController.post ('/create', async (req, res) => {
     const admin = new Administrator (req.body.username, req.body.email, req.body.password, req.body.firstName, req.body.lastName);
+
+    try {
+        await validateEmail (req.body.email);
+    }
+    catch (error) {
+        res.status (400).json ( {errorMessage: "invalid email" });
+        return
+    }
 
     var token : Promise<any>
     try {

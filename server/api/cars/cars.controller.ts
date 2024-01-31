@@ -3,6 +3,7 @@ import { CarModel } from "../../database/models/car.model";
 import Car from "./car"
 import { checkCarByVIN, addCar, setServicePrice } from "../../database/methods/car.methods";
 import { validateToken } from "../../middleware/token-validator";
+import { validateTestCard } from "../../external/payment-api"
 
 const carsController = Router()
 
@@ -19,6 +20,7 @@ carsController.get('/get_by_VIN/:VIN', async (req, res) => {
         res.status (400).json ({errorMessage: "Invalid Client Number value."});
         return;
     } */
+    //validateTestCard ();
 
     var car : Promise<any>;
     try {
